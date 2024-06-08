@@ -17,6 +17,8 @@
     "files.associations": {
         "main.h": "c",
         "string.h": "c",
-        "queue.h": "c"
+        "queue.h": "c",
+        "freertos.h": "c",
+        "stdio.h": "c"
     }
 }

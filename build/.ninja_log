@@ -960,3 +960,12 @@
 371	1651	7395277764634463	esp-idf/esp32/ld/esp32.project.ld	dca6e34562232336
 1652	2112	7395277769423164	stepper_motor_example.elf	57441bea7a4914
 2112	2244	7395277770823459	.bin_timestamp	6a9b81633ecebfbd
+40	94	7395275860878876	bootloader-prefix/src/bootloader-stamp/bootloader-build	b79d421a6ebdbe21
+40	94	7395275860878876	bootloader/bootloader.elf	b79d421a6ebdbe21
+40	94	7395275860878876	bootloader/bootloader.bin	b79d421a6ebdbe21
+40	94	7395275860878876	bootloader/bootloader.map	b79d421a6ebdbe21
+43	460	7395529294247315	esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj	81497730ca7aeccf
+460	579	7395529295524122	esp-idf/main/libmain.a	27feb7441298acef
+579	1904	7395529308705422	esp-idf/esp32/ld/esp32.project.ld	dca6e34562232336
+1905	2440	7395529314119484	stepper_motor_example.elf	57441bea7a4914
+2441	2596	7395529315757929	.bin_timestamp	6a9b81633ecebfbd
