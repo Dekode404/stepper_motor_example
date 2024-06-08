@@ -1,11 +1,18 @@
-/* GPIO Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
+/*H**********************************************************************
+ * FILENAME :        main.c             DESIGN REF: NA
+ *
+ * DESCRIPTION :
+ *       main.c file for the stepper motor example.
+ *
+ * NOTES :
+ *       These functions are a part of the FM suite;
+ *       See IMS FM0121 for detailed description.
+ *
+ *       Copyright: All rights reserved.
+ *
+ * AUTHOR     :  Saurabh kadam.
+ * START DATE :  08 Jun 2024
+ *H*/
 
 #include "main.h"
 
