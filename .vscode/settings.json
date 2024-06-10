@@ -22,6 +22,10 @@
         "stdio.h": "c",
         "gpio.h": "c",
         "stdlib.h": "c",
-        "task.h": "c"
-    }
+        "task.h": "c",
+        "ledc.h": "c"
+    },
+    "cSpell.words": [
+        "ledc"
+    ]
 }
