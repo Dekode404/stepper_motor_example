@@ -19,6 +19,9 @@
         "string.h": "c",
         "queue.h": "c",
         "freertos.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "gpio.h": "c",
+        "stdlib.h": "c",
+        "task.h": "c"
     }
 }

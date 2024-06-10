@@ -26,18 +26,24 @@ void app_main(void)
     io_conf.intr_type = GPIO_PIN_INTR_DISABLE;  // disable interrupt
     io_conf.mode = GPIO_MODE_OUTPUT;            // set as output mode
     io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL; // bit mask of the pins that you want to set,e.g.GPIO18/19
-    io_conf.pull_down_en = 0;                   // disable pull-down mode
-    io_conf.pull_up_en = 0;                     // disable pull-up mode
+    io_conf.pull_down_en = GPIO_PULLUP_DISABLE; // disable pull-down mode
+    io_conf.pull_up_en = GPIO_PULLDOWN_DISABLE; // disable pull-up mode
 
     gpio_config(&io_conf); // configure GPIO with the given settings
 
     while (1)
     {
 
-        gpio_set_level(GPIO_OUTPUT_PIN_SEL, SET_GPIO_LEVEL_HIGH);
+        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
+        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+        gpio_set_level(STEPPER_MOTOR_PUL_PIN, SET_GPIO_LEVEL_HIGH);
 
         vTaskDelay(1000 / portTICK_RATE_MS);
 
-        gpio_set_level(GPIO_OUTPUT_PIN_SEL, SET_GPIO_LEVEL_HIGH);
+        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
+        gpio_set_level(STEPPER_MOTOR_PUL_PIN, SET_GPIO_LEVEL_LOW);
+
+        vTaskDelay(1000 / portTICK_RATE_MS);
     }
 }
