@@ -18,8 +18,6 @@
 
 void app_main(void)
 {
-    printf("Hello world \n");
-
     gpio_config_t io_conf = {};                 // zero-initialize the config structure.
     io_conf.intr_type = GPIO_PIN_INTR_DISABLE;  // disable interrupt
     io_conf.mode = GPIO_MODE_OUTPUT;            // set as output mode
@@ -47,8 +45,22 @@ void app_main(void)
 
     ledc_fade_func_install(0);
 
-    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
     gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_50, 0);
 
-    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, 512, 0);
+    while (true)
+    {
+        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+        vTaskDelay(1600 / portTICK_PERIOD_MS);
+        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+
+        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
+        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+        vTaskDelay(1600 / portTICK_PERIOD_MS);
+        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+    }
 }
