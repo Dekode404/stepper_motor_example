@@ -16,7 +16,7 @@
 
 #include "main.h"
 
-void app_main(void)
+esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void)
 {
     gpio_config_t io_conf = {};                 // zero-initialize the config structure.
     io_conf.intr_type = GPIO_PIN_INTR_DISABLE;  // disable interrupt
@@ -24,8 +24,12 @@ void app_main(void)
     io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL; // bit mask of the pins that you want to set,e.g.GPIO18/19
     io_conf.pull_down_en = GPIO_PULLUP_DISABLE; // disable pull-down mode
     io_conf.pull_up_en = GPIO_PULLDOWN_DISABLE; // disable pull-up mode
-    gpio_config(&io_conf);                      // configure GPIO with the given settings
 
+    return (gpio_config(&io_conf)); // configure GPIO with the given settings
+}
+
+esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
+{
     ledc_timer_config_t PWM_timer = {};            // zero-initialize the config structure for the timer used for the PWM.
     PWM_timer.speed_mode = LEDC_LOW_SPEED_MODE;    // Driver in low speed mode
     PWM_timer.duty_resolution = LEDC_TIMER_10_BIT; // Set the resolution of the timer to 10BIT
@@ -34,7 +38,7 @@ void app_main(void)
     PWM_timer.clk_cfg = LEDC_AUTO_CLK;
     ledc_timer_config(&PWM_timer);
 
-    ledc_channel_config_t PWM_channel_for_stepper_motor = {}; // zero-initialize the config structure for PWM channel.
+    ledc_channel_config_t PWM_channel_for_stepper_motor = {};
     PWM_channel_for_stepper_motor.gpio_num = STEPPER_MOTOR_PUL_PIN;
     PWM_channel_for_stepper_motor.speed_mode = LEDC_LOW_SPEED_MODE;
     PWM_channel_for_stepper_motor.channel = LEDC_CHANNEL_0;
@@ -43,7 +47,14 @@ void app_main(void)
     PWM_channel_for_stepper_motor.hpoint = 0;
     ledc_channel_config(&PWM_channel_for_stepper_motor);
 
-    ledc_fade_func_install(0);
+    return (ledc_fade_func_install(0));
+}
+
+void app_main(void)
+{
+
+    Initialize_GPIO_for_Stepper_Motor_Driver();
+    Initialize_PWM_for_Stepper_Motor_Driver();
 
     gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
     gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);

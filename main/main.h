@@ -38,4 +38,7 @@
 #define PWM_FREQUENCY_1KHZ 1000
 #define PWM_DUTY_CYCLE_50 512
 
+esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void);
+esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void);
+
 #endif // HEADER_NAME_H
