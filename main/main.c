@@ -37,7 +37,7 @@ esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void)
     // Set up the GPIO configuration
     io_conf.intr_type = GPIO_PIN_INTR_DISABLE;  // Disable interrupt for the GPIO pins
     io_conf.mode = GPIO_MODE_OUTPUT;            // Set the GPIO pins to output mode
-    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL; // Bit mask of the pins to be configured, e.g., GPIO18/19
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL; // Bit mask of the pins to be configured
     io_conf.pull_down_en = GPIO_PULLUP_DISABLE; // Disable pull-down mode for the GPIO pins
     io_conf.pull_up_en = GPIO_PULLDOWN_DISABLE; // Disable pull-up mode for the GPIO pins
 
@@ -45,26 +45,51 @@ esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void)
     return gpio_config(&io_conf);
 }
 
+/**
+ * @brief Initialize PWM for Stepper Motor Driver
+ *
+ * This function configures the PWM timer and channel for the stepper motor driver.
+ * It sets the timer properties, including speed mode, resolution, timer number,
+ * and frequency. It also configures the PWM channel, assigning the GPIO pin,
+ * speed mode, channel number, timer selection, duty cycle, and high point.
+ * Additionally, it installs the fade function for smooth PWM transitions.
+ *
+ * @return
+ *     - ESP_OK: Successfully installed the fade function
+ *     - ESP_ERR_NO_MEM: Insufficient memory for fade function
+ *     - ESP_ERR_INVALID_STATE: LEDC driver not initialized or other invalid state
+ */
 esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
 {
-    ledc_timer_config_t PWM_timer = {};            // zero-initialize the config structure for the timer used for the PWM.
-    PWM_timer.speed_mode = LEDC_LOW_SPEED_MODE;    // Driver in low speed mode
-    PWM_timer.duty_resolution = LEDC_TIMER_10_BIT; // Set the resolution of the timer to 10BIT
-    PWM_timer.timer_num = LEDC_TIMER_0;            // Used timer zero
-    PWM_timer.freq_hz = PWM_FREQUENCY_1KHZ;        // Set frequency to 1kHZ
-    PWM_timer.clk_cfg = LEDC_AUTO_CLK;
+    // Configuration structure for the PWM timer
+    ledc_timer_config_t PWM_timer = {}; // Zero-initialize the config structure for the timer used for the PWM
+
+    // Set up the PWM timer configuration
+    PWM_timer.speed_mode = LEDC_LOW_SPEED_MODE;    // Use the low-speed mode for the PWM driver
+    PWM_timer.duty_resolution = LEDC_TIMER_10_BIT; // Set the resolution of the timer to 10 bits
+    PWM_timer.timer_num = LEDC_TIMER_0;            // Use timer 0
+    PWM_timer.freq_hz = PWM_FREQUENCY_1KHZ;        // Set the PWM frequency to 1 kHz
+    PWM_timer.clk_cfg = LEDC_AUTO_CLK;             // Auto-select the clock source
+
+    // Configure the PWM timer with the specified settings
     ledc_timer_config(&PWM_timer);
 
-    ledc_channel_config_t PWM_channel_for_stepper_motor = {};
-    PWM_channel_for_stepper_motor.gpio_num = STEPPER_MOTOR_PUL_PIN;
-    PWM_channel_for_stepper_motor.speed_mode = LEDC_LOW_SPEED_MODE;
-    PWM_channel_for_stepper_motor.channel = LEDC_CHANNEL_0;
-    PWM_channel_for_stepper_motor.timer_sel = LEDC_TIMER_0;
-    PWM_channel_for_stepper_motor.duty = 0;
-    PWM_channel_for_stepper_motor.hpoint = 0;
+    // Configuration structure for the PWM channel
+    ledc_channel_config_t PWM_channel_for_stepper_motor = {}; // Zero-initialize the config structure for the PWM channel
+
+    // Set up the PWM channel configuration
+    PWM_channel_for_stepper_motor.gpio_num = STEPPER_MOTOR_PUL_PIN; // Assign the GPIO pin for the stepper motor pulse
+    PWM_channel_for_stepper_motor.speed_mode = LEDC_LOW_SPEED_MODE; // Use the low-speed mode for the PWM channel
+    PWM_channel_for_stepper_motor.channel = LEDC_CHANNEL_0;         // Use channel 0
+    PWM_channel_for_stepper_motor.timer_sel = LEDC_TIMER_0;         // Select timer 0 for this channel
+    PWM_channel_for_stepper_motor.duty = 0;                         // Initialize the duty cycle to 0
+    PWM_channel_for_stepper_motor.hpoint = 0;                       // Set the high point to 0
+
+    // Configure the PWM channel with the specified settings
     ledc_channel_config(&PWM_channel_for_stepper_motor);
 
-    return (ledc_fade_func_install(0));
+    // Install the fade function, allowing smooth PWM transitions and return the result
+    return ledc_fade_func_install(0);
 }
 
 void app_main(void)
