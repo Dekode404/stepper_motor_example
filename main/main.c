@@ -16,16 +16,33 @@
 
 #include "main.h"
 
+/**
+ * @brief Initialize GPIO for Stepper Motor Driver
+ *
+ * This function configures the GPIO pins for the stepper motor driver.
+ * It sets the pins to output mode, disables interrupts, and ensures that
+ * pull-up and pull-down modes are disabled.
+ *
+ * @return
+ *     - ESP_OK: Successfully configured the GPIO pins
+ *     - ESP_ERR_INVALID_ARG: Parameter error
+ *     - ESP_ERR_INVALID_STATE: GPIO driver is not initialized
+ *     - ESP_FAIL: Other failures
+ */
 esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void)
 {
-    gpio_config_t io_conf = {};                 // zero-initialize the config structure.
-    io_conf.intr_type = GPIO_PIN_INTR_DISABLE;  // disable interrupt
-    io_conf.mode = GPIO_MODE_OUTPUT;            // set as output mode
-    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL; // bit mask of the pins that you want to set,e.g.GPIO18/19
-    io_conf.pull_down_en = GPIO_PULLUP_DISABLE; // disable pull-down mode
-    io_conf.pull_up_en = GPIO_PULLDOWN_DISABLE; // disable pull-up mode
+    // Configuration structure for GPIO settings
+    gpio_config_t io_conf = {}; // Zero-initialize the config structure
 
-    return (gpio_config(&io_conf)); // configure GPIO with the given settings
+    // Set up the GPIO configuration
+    io_conf.intr_type = GPIO_PIN_INTR_DISABLE;  // Disable interrupt for the GPIO pins
+    io_conf.mode = GPIO_MODE_OUTPUT;            // Set the GPIO pins to output mode
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL; // Bit mask of the pins to be configured, e.g., GPIO18/19
+    io_conf.pull_down_en = GPIO_PULLUP_DISABLE; // Disable pull-down mode for the GPIO pins
+    io_conf.pull_up_en = GPIO_PULLDOWN_DISABLE; // Disable pull-up mode for the GPIO pins
+
+    // Configure GPIO with the given settings and return the result
+    return gpio_config(&io_conf);
 }
 
 esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)

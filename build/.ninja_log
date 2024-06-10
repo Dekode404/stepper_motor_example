@@ -1588,3 +1588,17 @@
 40	81	7395275860878876	bootloader/bootloader.bin	b79d421a6ebdbe21
 40	81	7395275860878876	bootloader/bootloader.map	b79d421a6ebdbe21
 82	7316	0	CMakeFiles/flash	fdf4238f6cdaecc
+42	83	7395275860878876	bootloader-prefix/src/bootloader-stamp/bootloader-build	b79d421a6ebdbe21
+42	83	7395275860878876	bootloader/bootloader.elf	b79d421a6ebdbe21
+42	83	7395275860878876	bootloader/bootloader.bin	b79d421a6ebdbe21
+42	83	7395275860878876	bootloader/bootloader.map	b79d421a6ebdbe21
+44	338	7397186649609308	esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj	81497730ca7aeccf
+338	383	7397186650137785	esp-idf/main/libmain.a	27feb7441298acef
+383	1796	7397186664133215	esp-idf/esp32/ld/esp32.project.ld	dca6e34562232336
+1796	2292	7397186669190495	stepper_motor_example.elf	57441bea7a4914
+2292	2432	7397186670615600	.bin_timestamp	6a9b81633ecebfbd
+43	81	7395275860878876	bootloader-prefix/src/bootloader-stamp/bootloader-build	b79d421a6ebdbe21
+43	81	7395275860878876	bootloader/bootloader.elf	b79d421a6ebdbe21
+43	81	7395275860878876	bootloader/bootloader.bin	b79d421a6ebdbe21
+43	81	7395275860878876	bootloader/bootloader.map	b79d421a6ebdbe21
+82	5107	0	CMakeFiles/flash	fdf4238f6cdaecc
