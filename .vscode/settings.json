@@ -23,9 +23,12 @@
         "gpio.h": "c",
         "stdlib.h": "c",
         "task.h": "c",
-        "ledc.h": "c"
+        "ledc.h": "c",
+        "stdint.h": "c",
+        "stdbool.h": "c"
     },
     "cSpell.words": [
+        "hpoint",
         "ledc"
     ]
 }
