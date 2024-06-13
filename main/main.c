@@ -106,18 +106,58 @@ void app_main(void)
 
     initialize_console();
 
+    const char *prompt = LOG_COLOR_I PROMPT_STR "> " LOG_RESET_COLOR; // Define the prompt string
+
+    int probe_status = linenoiseProbe(); // Probe the terminal for capabilities
+
+    if (probe_status) // Check if probe was unsuccessful
+    {
+        printf("\n"
+               "Your terminal application does not support escape sequences.\n"
+               "Line editing and history features are disabled.\n"
+               "On Windows, try using Putty instead.\n");
+
+        linenoiseSetDumbMode(1); // Disable advanced features if terminal does not support escape sequences
+    }
+
+    /* Main loop */
     while (true)
     {
-        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
-        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
-        vTaskDelay(1600 / portTICK_PERIOD_MS);
-        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        /* Get a line using linenoise.
+         * The line is returned when ENTER is pressed.
+         */
+        char *line = linenoise(prompt); // Read a line of input from the console
+        if (line == NULL)
+        { // Break on EOF or error
+            break;
+        }
+        /* Add the command to the history if not empty */
+        if (strlen(line) > 0)
+        {
+            linenoiseHistoryAdd(line); // Add the command to history if it's not empty
+        }
 
-        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
-        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
-        vTaskDelay(1600 / portTICK_PERIOD_MS);
-        gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        /* Try to run the command */
+        int ret;
+        esp_err_t err = esp_console_run(line, &ret); // Execute the command
+        if (err == ESP_ERR_NOT_FOUND)
+        {
+            printf("Unrecognized command\n"); // Print message if command is not recognized
+        }
+        else if (err == ESP_ERR_INVALID_ARG)
+        {
+            // Command was empty
+        }
+        else if (err == ESP_OK && ret != ESP_OK)
+        {
+            printf("Command returned non-zero error code: 0x%x (%s)\n", ret, esp_err_to_name(ret)); // Print error code if command failed
+        }
+        else if (err != ESP_OK)
+        {
+            printf("Internal error: %s\n", esp_err_to_name(err)); // Print internal error
+        }
+
+        /* linenoise allocates line buffer on the heap, so need to free it */
+        linenoiseFree(line); // Free the allocated line buffer
     }
 }

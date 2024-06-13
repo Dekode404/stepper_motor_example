@@ -30,6 +30,7 @@
 #include "nvs.h"
 #include "nvs_flash.h"
 
+#define PROMPT_STR CONFIG_IDF_TARGET // Prompt string for the console
 #define CONSOLE_UART_0 0x00
 #define CONSOLE_UART_BAUDRATE_115200 115200
 
