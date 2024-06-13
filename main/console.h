@@ -30,4 +30,14 @@
 #include "nvs.h"
 #include "nvs_flash.h"
 
+/** Arguments used for the stepper motor to run */
+struct
+{
+    struct arg_int *Frequency; // Argument for Stepper motor frequency
+    struct arg_int *Direction; // Argument for Stepper motor direction
+    struct arg_int *Steps;     // Argument for Stepper motor Steps
+    struct arg_int *RPM;       // Argument for Stepper motor RPM
+    struct arg_int *end;       // End marker for argument table
+} Stepper_motor_args;          // Structure to hold the arguments for the stepper_motor command
+
 #endif // CONSOLE_H
