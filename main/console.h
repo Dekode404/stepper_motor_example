@@ -35,6 +35,8 @@
 #define CONSOLE_UART_BAUDRATE_115200 115200
 
 void initialize_console(void);
+void register_start_motor_cmd(void);
+int start_motor(int argc, char **argv);
 
 /** Arguments used for the stepper motor to run */
 struct
@@ -43,7 +45,7 @@ struct
     struct arg_int *Direction; // Argument for Stepper motor direction
     struct arg_int *Steps;     // Argument for Stepper motor Steps
     struct arg_int *RPM;       // Argument for Stepper motor RPM
-    struct arg_int *end;       // End marker for argument table
+    struct arg_end *end;       // End marker for argument table
 } Stepper_motor_args;          // Structure to hold the arguments for the stepper_motor command
 
 #endif // CONSOLE_H

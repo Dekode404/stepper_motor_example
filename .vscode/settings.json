@@ -52,6 +52,7 @@
         "ledc",
         "linenoise",
         "Minicom",
+        "nerrors",
         "SCLK"
     ]
 }

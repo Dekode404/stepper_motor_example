@@ -1,4 +1,55 @@
 #include <console.h>
+#include "main.h"
+
+int start_motor(int argc, char **argv)
+{
+    int nerrors = arg_parse(argc, argv, (void **)&Stepper_motor_args); // Parse command line arguments
+
+    if (nerrors != 0)
+    {
+        arg_print_errors(stderr, Stepper_motor_args.end, argv[0]); // Print errors if argument parsing fails
+        return 1;
+    }
+
+    printf("FREQUENCY: '%d'\n", Stepper_motor_args.Frequency->ival[0]); // Print Frequency
+    printf("DIRECTION: '%d'\n", Stepper_motor_args.Direction->ival[0]); // Print Direction
+    printf("STEPS    : '%d'\n", Stepper_motor_args.Steps->ival[0]);     // Print Steps
+    printf("RPM      : '%d'\n", Stepper_motor_args.RPM->ival[0]);       // Print RPM
+
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+
+    if (Stepper_motor_args.Direction->ival[0] == 1)
+    {
+        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+    }
+    else
+    {
+        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
+    }
+
+    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, Stepper_motor_args.Frequency->ival[0], 0);
+
+    return 0;
+}
+
+void register_start_motor_cmd(void)
+{
+    Stepper_motor_args.Frequency = arg_int0(NULL, "F", "<t>", "Frequency of the PWM");           // Define timeout argument
+    Stepper_motor_args.Direction = arg_int0(NULL, "D", "<t>", "Direction of the stepper motor"); // Define SSID argument
+    Stepper_motor_args.Steps = arg_int0(NULL, "S", "<t>", "Steps of the motor");                 // Define password argument
+    Stepper_motor_args.RPM = arg_int0(NULL, "R", "<t>", "RPM of the motor");                     // Define password argument
+    Stepper_motor_args.end = arg_end(2);                                                         // Define end marker for argument table
+
+    const esp_console_cmd_t join_cmd = {
+        .command = "start_motor",                      // Command name
+        .help = "Start moving the motor continuously", // Command description
+        .hint = NULL,
+        .func = &start_motor,           // Command handler function
+        .argtable = &Stepper_motor_args // Argument table
+    };
+
+    ESP_ERROR_CHECK(esp_console_cmd_register(&join_cmd)); // Register the 'join' command with the console
+}
 
 void initialize_console(void)
 {
