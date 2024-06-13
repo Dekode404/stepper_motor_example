@@ -15,6 +15,7 @@
  *H*/
 
 #include "main.h"
+#include "console.h"
 
 /**
  * @brief Initialize GPIO for Stepper Motor Driver
@@ -98,9 +99,12 @@ void app_main(void)
     Initialize_GPIO_for_Stepper_Motor_Driver();
     Initialize_PWM_for_Stepper_Motor_Driver();
 
+    /* Make the stop */
     gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
     gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
     ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_50, 0);
+
+    initialize_console();
 
     while (true)
     {

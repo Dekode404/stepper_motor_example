@@ -30,6 +30,11 @@
 #include "nvs.h"
 #include "nvs_flash.h"
 
+#define CONSOLE_UART_0 0x00
+#define CONSOLE_UART_BAUDRATE_115200 115200
+
+void initialize_console(void);
+
 /** Arguments used for the stepper motor to run */
 struct
 {
