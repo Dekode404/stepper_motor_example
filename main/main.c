@@ -76,12 +76,12 @@ esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void)
  * Additionally, it installs the fade function for smooth PWM transitions.
  *
  * @return
- *     - ESP_OK: Successfully installed the fade function
- *     - ESP_ERR_NO_MEM: Insufficient memory for fade function
- *     - ESP_ERR_INVALID_STATE: LEDC driver not initialized or other invalid state
+ *     - Sum of all ESP return values
  */
 esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
 {
+    esp_err_t Function_Error = ESP_OK;
+
     // Configuration structure for the PWM timer
     ledc_timer_config_t PWM_timer = {}; // Zero-initialize the config structure for the timer used for the PWM
 
@@ -93,7 +93,7 @@ esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
     PWM_timer.clk_cfg = LEDC_AUTO_CLK;             // Auto-select the clock source
 
     // Configure the PWM timer with the specified settings
-    ledc_timer_config(&PWM_timer);
+    Function_Error += ledc_timer_config(&PWM_timer);
 
     // Configuration structure for the PWM channel
     ledc_channel_config_t PWM_channel_for_stepper_motor = {}; // Zero-initialize the config structure for the PWM channel
@@ -107,10 +107,13 @@ esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
     PWM_channel_for_stepper_motor.hpoint = 0;                       // Set the high point to 0
 
     // Configure the PWM channel with the specified settings
-    ledc_channel_config(&PWM_channel_for_stepper_motor);
+    Function_Error += ledc_channel_config(&PWM_channel_for_stepper_motor);
 
     // Install the fade function, allowing smooth PWM transitions and return the result
-    return ledc_fade_func_install(0);
+    Function_Error += ledc_fade_func_install(0);
+
+    // Return the sum of all ESP return values
+    return Function_Error;
 }
 
 void app_main(void)
@@ -118,7 +121,7 @@ void app_main(void)
 
     ESP_ERROR_CHECK(Initialize_GPIO_for_Stepper_Motor_Driver());
 
-    Initialize_PWM_for_Stepper_Motor_Driver();
+    ESP_ERROR_CHECK(Initialize_PWM_for_Stepper_Motor_Driver());
 
     /* Stop the stepper motor */
     ESP_ERROR_CHECK(Stop_stepper_Motor());
