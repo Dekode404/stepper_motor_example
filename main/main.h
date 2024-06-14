@@ -41,5 +41,6 @@
 
 esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void);
 esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void);
+esp_err_t Stop_stepper_Motor(void);
 
 #endif // HEADER_NAME_H

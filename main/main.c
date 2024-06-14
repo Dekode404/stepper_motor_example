@@ -116,7 +116,8 @@ esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
 void app_main(void)
 {
 
-    Initialize_GPIO_for_Stepper_Motor_Driver();
+    ESP_ERROR_CHECK(Initialize_GPIO_for_Stepper_Motor_Driver());
+
     Initialize_PWM_for_Stepper_Motor_Driver();
 
     /* Stop the stepper motor */
