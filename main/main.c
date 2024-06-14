@@ -18,6 +18,26 @@
 #include "console.h"
 
 /**
+ * @brief Stop the stepper motor
+ *
+ * This function sets the GPIO levels to high, stopping the stepper motor,
+ * and sets the PWM duty cycle to 0.
+ *
+ * @return
+ *     - Sum of all ESP return values
+ */
+esp_err_t Stop_stepper_Motor(void)
+{
+    esp_err_t Function_Error = ESP_OK;
+
+    Function_Error += gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
+    Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+    Function_Error += ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_00, 0);
+
+    return Function_Error;
+}
+
+/**
  * @brief Initialize GPIO for Stepper Motor Driver
  *
  * This function configures the GPIO pins for the stepper motor driver.
@@ -99,10 +119,8 @@ void app_main(void)
     Initialize_GPIO_for_Stepper_Motor_Driver();
     Initialize_PWM_for_Stepper_Motor_Driver();
 
-    /* Make the stop */
-    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH);
-    gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
-    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_00, 0);
+    /* Stop the stepper motor */
+    ESP_ERROR_CHECK(Stop_stepper_Motor());
 
     initialize_console();
 
