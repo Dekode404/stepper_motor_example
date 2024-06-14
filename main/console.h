@@ -35,7 +35,7 @@
 #define CONSOLE_UART_BAUDRATE_115200 115200
 
 void initialize_console(void);
-void register_start_motor_cmd(void);
+esp_err_t register_start_motor_cmd(void);
 int start_motor(int argc, char **argv);
 
 /** Arguments used for the stepper motor to run */

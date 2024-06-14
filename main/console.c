@@ -32,7 +32,19 @@ int start_motor(int argc, char **argv)
     return 0;
 }
 
-void register_start_motor_cmd(void)
+/**
+ * @brief Register the start_motor command with the console
+ *
+ * This function defines the command-line arguments for the start_motor command,
+ * creates a console command structure, and registers the command with the console.
+ *
+ * @return
+ *     - ESP_OK: Successfully registered the command
+ *     - ESP_ERR_NO_MEM: Insufficient memory to allocate command structure
+ *     - ESP_ERR_INVALID_ARG: Invalid argument provided
+ *     - ESP_ERR_INVALID_STATE: Console not initialized or other invalid state
+ */
+esp_err_t register_start_motor_cmd(void)
 {
     Stepper_motor_args.Frequency = arg_int0(NULL, "F", "<t>", "Frequency of the PWM");           // Define timeout argument
     Stepper_motor_args.Direction = arg_int0(NULL, "D", "<t>", "Direction of the stepper motor"); // Define SSID argument
@@ -43,12 +55,12 @@ void register_start_motor_cmd(void)
     const esp_console_cmd_t join_cmd = {
         .command = "start_motor",                      // Command name
         .help = "Start moving the motor continuously", // Command description
-        .hint = NULL,
-        .func = &start_motor,           // Command handler function
-        .argtable = &Stepper_motor_args // Argument table
+        .hint = NULL,                                  // Command hint (optional)
+        .func = &start_motor,                          // Command handler function
+        .argtable = &Stepper_motor_args                // Argument table
     };
 
-    ESP_ERROR_CHECK(esp_console_cmd_register(&join_cmd)); // Register the 'join' command with the console
+    return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
 }
 
 void initialize_console(void)
