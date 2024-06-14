@@ -1,8 +1,22 @@
 #include <console.h>
 #include "main.h"
 
-int start_motor(int argc, char **argv)
+/**
+ * @brief Start the stepper motor based on command-line arguments.
+ *
+ * This function parses the command-line arguments for the start_motor command,
+ * including frequency, direction, steps, and RPM. It then initializes the motor
+ * based on these arguments, setting the appropriate GPIO levels, PWM frequency,
+ * and duty cycle. The function also prints the parsed arguments for debugging.
+ *
+ * @param argc Number of command-line arguments.
+ * @param argv Array of command-line argument strings.
+ * @return 0 if successful, 1 if argument parsing fails.
+ */
+esp_err_t start_motor(int argc, char **argv)
 {
+    esp_err_t Function_Error = ESP_OK;
+
     int nerrors = arg_parse(argc, argv, (void **)&Stepper_motor_args); // Parse command line arguments
 
     if (nerrors != 0)
@@ -16,20 +30,26 @@ int start_motor(int argc, char **argv)
     printf("STEPS    : '%d'\n", Stepper_motor_args.Steps->ival[0]);     // Print Steps
     printf("RPM      : '%d'\n", Stepper_motor_args.RPM->ival[0]);       // Print RPM
 
-    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+    // Set GPIO level for motor enable pin
+    Function_Error += gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
 
+    // Set GPIO level for motor direction pin based on parsed direction
     if (Stepper_motor_args.Direction->ival[0] == 1)
     {
-        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
     }
     else
     {
-        gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
+        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
     }
 
-    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, Stepper_motor_args.Frequency->ival[0], 0);
+    // Set PWM frequency for motor
+    Function_Error += ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, Stepper_motor_args.Frequency->ival[0]);
 
-    return 0;
+    // Set PWM duty cycle for motor
+    Function_Error += ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_50, 0);
+
+    return Function_Error;
 }
 
 /**
@@ -63,6 +83,14 @@ esp_err_t register_start_motor_cmd(void)
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
 }
 
+/**
+ * @brief Initialize the console for UART communication and command-line interface.
+ *
+ * This function configures the UART for console communication, sets up line endings,
+ * configures the UART parameters, installs the UART driver, initializes the console,
+ * configures the linenoise library for command completion and history, and sets other
+ * necessary configurations for the console operation.
+ */
 void initialize_console(void)
 {
     /* Drain stdout before reconfiguring it */

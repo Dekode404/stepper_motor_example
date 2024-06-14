@@ -36,7 +36,7 @@
 
 void initialize_console(void);
 esp_err_t register_start_motor_cmd(void);
-int start_motor(int argc, char **argv);
+esp_err_t start_motor(int argc, char **argv);
 
 /** Arguments used for the stepper motor to run */
 struct

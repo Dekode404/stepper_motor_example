@@ -128,8 +128,8 @@ void app_main(void)
 
     initialize_console();
 
-    esp_console_register_help_command();
-    register_start_motor_cmd();
+    ESP_ERROR_CHECK(esp_console_register_help_command());
+    ESP_ERROR_CHECK(register_start_motor_cmd());
 
     const char *prompt = LOG_COLOR_I PROMPT_STR "> " LOG_RESET_COLOR; // Define the prompt string
 
