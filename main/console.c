@@ -83,6 +83,18 @@ esp_err_t register_start_motor_cmd(void)
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
 }
 
+esp_err_t register_stop_motor_cmd(void)
+{
+    const esp_console_cmd_t join_cmd = {
+        .command = "stop_motor",                                 // Command name
+        .help = "Stop motor by disabling and also stop the PWM", // Command description
+        .hint = NULL,                                            // Command hint (optional)
+        .func = &Stop_stepper_Motor,                             // Command handler function
+    };
+
+    return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
+}
+
 /**
  * @brief Initialize the console for UART communication and command-line interface.
  *

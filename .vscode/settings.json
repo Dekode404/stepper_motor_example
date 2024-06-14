@@ -44,7 +44,8 @@
         "esp_console.h": "c",
         "*.ipp": "c",
         "esp_system.h": "c",
-        "linenoise.h": "c"
+        "linenoise.h": "c",
+        "esp_vfs_fat.h": "c"
     },
     "cSpell.words": [
         "argtable",

@@ -36,6 +36,7 @@
 
 void initialize_console(void);
 esp_err_t register_start_motor_cmd(void);
+esp_err_t register_stop_motor_cmd(void);
 esp_err_t start_motor(int argc, char **argv);
 
 /** Arguments used for the stepper motor to run */
