@@ -31,7 +31,7 @@
 
 #define STEPPER_MOTOR_EN_PIN GPIO_NUM_15
 #define STEPPER_MOTOR_DIR_PIN GPIO_NUM_4
-#define STEPPER_MOTOR_PUL_PIN GPIO_NUM_2
+#define STEPPER_MOTOR_PUL_PIN GPIO_NUM_16
 
 #define GPIO_OUTPUT_PIN_SEL ((1ULL << STEPPER_MOTOR_EN_PIN) | (1ULL << STEPPER_MOTOR_DIR_PIN))
 
@@ -42,5 +42,6 @@
 esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void);
 esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void);
 esp_err_t Stop_stepper_Motor(void);
+esp_err_t Start_stepper_Motor(uint8_t Motor_Direction, uint PWM_frequency, uint PWM_Duty_Cycle);
 
 #endif // HEADER_NAME_H

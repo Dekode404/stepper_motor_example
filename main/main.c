@@ -38,6 +38,43 @@ esp_err_t Stop_stepper_Motor(void)
 }
 
 /**
+ * @brief Start the stepper motor with specified parameters.
+ *
+ * This function enables the motor driver, sets the motor direction,
+ * configures the PWM frequency, and sets the PWM duty cycle.
+ *
+ * @param Motor_Direction The direction of the motor (0 for low, 1 for high).
+ * @param PWM_frequency The PWM frequency for motor control.
+ * @param PWM_Duty_Cycle The PWM duty cycle for motor control.
+ * @return ESP_OK if successful, or an error code if any operation fails.
+ */
+esp_err_t Start_stepper_Motor(uint8_t Motor_Direction, uint PWM_frequency, uint PWM_Duty_Cycle)
+{
+    esp_err_t Function_Error = ESP_OK;
+
+    // Enable the Motor driver
+    Function_Error += gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
+
+    // Set GPIO level for motor direction pin based on parsed direction
+    if (Stepper_motor_args.Direction->ival[0] == 1)
+    {
+        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
+    }
+    else
+    {
+        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
+    }
+
+    // Set PWM frequency for motor
+    Function_Error += ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, PWM_frequency);
+
+    // Set PWM duty cycle for motor
+    Function_Error += ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_Duty_Cycle, 0);
+
+    return Function_Error;
+}
+
+/**
  * @brief Initialize GPIO for Stepper Motor Driver
  *
  * This function configures the GPIO pins for the stepper motor driver.
@@ -131,6 +168,7 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_console_register_help_command());
     ESP_ERROR_CHECK(register_start_motor_cmd());
     ESP_ERROR_CHECK(register_stop_motor_cmd());
+    ESP_ERROR_CHECK(Register_Quick_Start_Motor_cmd());
 
     const char *prompt = LOG_COLOR_I PROMPT_STR "> " LOG_RESET_COLOR; // Define the prompt string
 

@@ -9,6 +9,26 @@
  * based on these arguments, setting the appropriate GPIO levels, PWM frequency,
  * and duty cycle. The function also prints the parsed arguments for debugging.
  *
+ * @return 0 if successful, 1 if argument parsing fails.
+ */
+esp_err_t quick_start_motor(void)
+{
+    printf("FREQUENCY: 1Khz\n");    // Print Frequency
+    printf("DIRECTION: FORWARD\n"); // Print Direction
+    printf("STEPS    : 50 \n");     // Print Steps
+    printf("RPM      : NA \n");     // Print RPM
+
+    return Start_stepper_Motor(1, PWM_FREQUENCY_1KHZ, PWM_DUTY_CYCLE_50);
+}
+
+/**
+ * @brief Start the stepper motor based on command-line arguments.
+ *
+ * This function parses the command-line arguments for the start_motor command,
+ * including frequency, direction, steps, and RPM. It then initializes the motor
+ * based on these arguments, setting the appropriate GPIO levels, PWM frequency,
+ * and duty cycle. The function also prints the parsed arguments for debugging.
+ *
  * @param argc Number of command-line arguments.
  * @param argv Array of command-line argument strings.
  * @return 0 if successful, 1 if argument parsing fails.
@@ -30,24 +50,7 @@ esp_err_t start_motor(int argc, char **argv)
     printf("STEPS    : '%d'\n", Stepper_motor_args.Steps->ival[0]);     // Print Steps
     printf("RPM      : '%d'\n", Stepper_motor_args.RPM->ival[0]);       // Print RPM
 
-    // Set GPIO level for motor enable pin
-    Function_Error += gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
-
-    // Set GPIO level for motor direction pin based on parsed direction
-    if (Stepper_motor_args.Direction->ival[0] == 1)
-    {
-        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
-    }
-    else
-    {
-        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
-    }
-
-    // Set PWM frequency for motor
-    Function_Error += ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, Stepper_motor_args.Frequency->ival[0]);
-
-    // Set PWM duty cycle for motor
-    Function_Error += ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_50, 0);
+    Function_Error += Start_stepper_Motor(Stepper_motor_args.Direction->ival[0], Stepper_motor_args.Frequency->ival[0], Stepper_motor_args.Steps->ival[0]);
 
     return Function_Error;
 }
@@ -90,6 +93,18 @@ esp_err_t register_stop_motor_cmd(void)
         .help = "Stop motor by disabling and also stop the PWM", // Command description
         .hint = NULL,                                            // Command hint (optional)
         .func = &Stop_stepper_Motor,                             // Command handler function
+    };
+
+    return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
+}
+
+esp_err_t Register_Quick_Start_Motor_cmd(void)
+{
+    const esp_console_cmd_t join_cmd = {
+        .command = "quick_motor_start",            // Command name
+        .help = "start_motor_with_default_values", // Command description
+        .hint = NULL,                              // Command hint (optional)
+        .func = &quick_start_motor,                // Command handler function
     };
 
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
