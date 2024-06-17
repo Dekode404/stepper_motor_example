@@ -13,10 +13,9 @@
  */
 esp_err_t quick_start_motor(void)
 {
-    printf("FREQUENCY: 1Khz\n");    // Print Frequency
-    printf("DIRECTION: FORWARD\n"); // Print Direction
-    printf("STEPS    : NA\n");      // Print Steps
-    printf("RPM      : NA\n");      // Print RPM
+    printf("FREQUENCY : 1Khz\n");    // Print Frequency
+    printf("DIRECTION : FORWARD\n"); // Print Direction
+    printf("DUTY CYCLE: 50\n");      // Print Duty cycle
 
     return Start_stepper_Motor(MOTOR_DIRECTION_FORWARD, PWM_FREQUENCY_1KHZ, PWM_DUTY_CYCLE_50);
 }
@@ -37,20 +36,19 @@ esp_err_t start_motor(int argc, char **argv)
 {
     esp_err_t Function_Error = ESP_OK;
 
-    int nerrors = arg_parse(argc, argv, (void **)&Stepper_motor_args); // Parse command line arguments
+    int nerrors = arg_parse(argc, argv, (void **)&Start_motor_args); // Parse command line arguments
 
     if (nerrors != 0)
     {
-        arg_print_errors(stderr, Stepper_motor_args.end, argv[0]); // Print errors if argument parsing fails
+        arg_print_errors(stderr, Start_motor_args.end, argv[0]); // Print errors if argument parsing fails
         return 1;
     }
 
-    printf("FREQUENCY: '%d'\n", Stepper_motor_args.Frequency->ival[0]); // Print Frequency
-    printf("DIRECTION: '%d'\n", Stepper_motor_args.Direction->ival[0]); // Print Direction
-    printf("STEPS    : '%d'\n", Stepper_motor_args.Steps->ival[0]);     // Print Steps
-    printf("RPM      : '%d'\n", Stepper_motor_args.RPM->ival[0]);       // Print RPM
+    printf("FREQUENCY : '%d'\n", Start_motor_args.Frequency->ival[0]);  // Print Frequency
+    printf("DIRECTION : '%d'\n", Start_motor_args.Direction->ival[0]);  // Print Direction
+    printf("DUTY CYCLE: '%d'\n", Start_motor_args.Duty_cycle->ival[0]); // Print Steps
 
-    Function_Error += Start_stepper_Motor(Stepper_motor_args.Direction->ival[0], Stepper_motor_args.Frequency->ival[0], Stepper_motor_args.Steps->ival[0]);
+    Function_Error += Start_stepper_Motor(Start_motor_args.Direction->ival[0], Start_motor_args.Frequency->ival[0], Start_motor_args.Duty_cycle->ival[0]);
 
     return Function_Error;
 }
@@ -69,18 +67,17 @@ esp_err_t start_motor(int argc, char **argv)
  */
 esp_err_t register_start_motor_cmd(void)
 {
-    Stepper_motor_args.Frequency = arg_int0(NULL, "F", "<t>", "Frequency of the PWM");           // Define timeout argument
-    Stepper_motor_args.Direction = arg_int0(NULL, "D", "<t>", "Direction of the stepper motor"); // Define SSID argument
-    Stepper_motor_args.Steps = arg_int0(NULL, "S", "<t>", "Steps of the motor");                 // Define password argument
-    Stepper_motor_args.RPM = arg_int0(NULL, "R", "<t>", "RPM of the motor");                     // Define password argument
-    Stepper_motor_args.end = arg_end(2);                                                         // Define end marker for argument table
+    Start_motor_args.Frequency = arg_int0(NULL, "frq", "<t>", "Frequency of the PWM");           // Define timeout argument
+    Start_motor_args.Direction = arg_int0(NULL, "dir", "<t>", "Direction of the stepper motor"); // Define SSID argument
+    Start_motor_args.Duty_cycle = arg_int0(NULL, "duty", "<t>", "Duty cycle of the PWM");        // Define password argument
+    Start_motor_args.end = arg_end(2);                                                           // Define end marker for argument table
 
     const esp_console_cmd_t join_cmd = {
         .command = "start_motor",                      // Command name
         .help = "Start moving the motor continuously", // Command description
         .hint = NULL,                                  // Command hint (optional)
         .func = &start_motor,                          // Command handler function
-        .argtable = &Stepper_motor_args                // Argument table
+        .argtable = &Start_motor_args                  // Argument table
     };
 
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
