@@ -39,6 +39,13 @@
 #define PWM_DUTY_CYCLE_50 512
 #define PWM_DUTY_CYCLE_00 00
 
+#define PWM_START_FREQ 100 // Starting frequency for PWM
+#define PWM_INCREMENT 100  // Increment step for frequency
+#define PWM_DELAY_MS 10    // Delay between frequency changes in milliseconds
+
+#define MOTOR_DIRECTION_FORWARD 01
+#define MOTOR_DIRECTION_BACKWARD 00
+
 esp_err_t Initialize_GPIO_for_Stepper_Motor_Driver(void);
 esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void);
 esp_err_t Stop_stepper_Motor(void);

@@ -55,21 +55,25 @@ esp_err_t Start_stepper_Motor(uint8_t Motor_Direction, uint PWM_frequency, uint 
     // Enable the Motor driver
     Function_Error += gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);
 
-    // Set GPIO level for motor direction pin based on parsed direction
-    if (Stepper_motor_args.Direction->ival[0] == 1)
-    {
-        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
-    }
-    else
-    {
-        Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_LOW);
-    }
-
-    // Set PWM frequency for motor
-    Function_Error += ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, PWM_frequency);
+    Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, (Motor_Direction == MOTOR_DIRECTION_FORWARD) ? SET_GPIO_LEVEL_HIGH : SET_GPIO_LEVEL_LOW);
 
     // Set PWM duty cycle for motor
     Function_Error += ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_Duty_Cycle, 0);
+
+    // Loop to gradually increase frequency from PWM_START_FREQ to target_frequency
+    for (uint32_t freq = PWM_START_FREQ; freq <= PWM_frequency; freq += PWM_INCREMENT)
+    {
+        Function_Error = ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, freq); // Set the PWM frequency
+
+        if (Function_Error != ESP_OK) // Check for errors while setting the frequency
+        {
+            printf("Error setting frequency: %dHZ\n", freq);
+
+            break; // Exit the loop if an error occurs
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(PWM_DELAY_MS)); // Delay to allow the motor to adapt to the new frequency
+    }
 
     return Function_Error;
 }

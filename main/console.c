@@ -15,10 +15,10 @@ esp_err_t quick_start_motor(void)
 {
     printf("FREQUENCY: 1Khz\n");    // Print Frequency
     printf("DIRECTION: FORWARD\n"); // Print Direction
-    printf("STEPS    : 50 \n");     // Print Steps
-    printf("RPM      : NA \n");     // Print RPM
+    printf("STEPS    : NA\n");      // Print Steps
+    printf("RPM      : NA\n");      // Print RPM
 
-    return Start_stepper_Motor(1, PWM_FREQUENCY_1KHZ, PWM_DUTY_CYCLE_50);
+    return Start_stepper_Motor(MOTOR_DIRECTION_FORWARD, PWM_FREQUENCY_1KHZ, PWM_DUTY_CYCLE_50);
 }
 
 /**

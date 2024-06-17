@@ -46,7 +46,9 @@
         "esp_system.h": "c",
         "linenoise.h": "c",
         "esp_vfs_fat.h": "c",
-        "nvs_flash.h": "c"
+        "nvs_flash.h": "c",
+        "chrono": "c",
+        "algorithm": "c"
     },
     "cSpell.words": [
         "argtable",
