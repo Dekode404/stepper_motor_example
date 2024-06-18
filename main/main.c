@@ -26,7 +26,7 @@
  * @return
  *     - Sum of all ESP return values
  */
-esp_err_t Stop_stepper_Motor(void)
+esp_err_t Stop_Stepper_Motor(void)
 {
     esp_err_t Function_Error = ESP_OK;
 
@@ -48,7 +48,7 @@ esp_err_t Stop_stepper_Motor(void)
  * @param PWM_Duty_Cycle The PWM duty cycle for motor control.
  * @return ESP_OK if successful, or an error code if any operation fails.
  */
-esp_err_t Start_stepper_Motor(uint8_t Motor_Direction, uint PWM_frequency, uint PWM_Duty_Cycle)
+esp_err_t Start_Stepper_Motor(uint8_t Motor_Direction, uint PWM_frequency, uint PWM_Duty_Cycle)
 {
     esp_err_t Function_Error = ESP_OK;
 
@@ -159,20 +159,22 @@ esp_err_t Initialize_PWM_for_Stepper_Motor_Driver(void)
 
 void app_main(void)
 {
-
     ESP_ERROR_CHECK(Initialize_GPIO_for_Stepper_Motor_Driver());
 
     ESP_ERROR_CHECK(Initialize_PWM_for_Stepper_Motor_Driver());
 
     /* Stop the stepper motor */
-    ESP_ERROR_CHECK(Stop_stepper_Motor());
+    ESP_ERROR_CHECK(Stop_Stepper_Motor());
 
     initialize_console();
 
     ESP_ERROR_CHECK(esp_console_register_help_command());
-    ESP_ERROR_CHECK(register_start_motor_cmd());
-    ESP_ERROR_CHECK(register_stop_motor_cmd());
-    ESP_ERROR_CHECK(Register_Quick_Start_Motor_cmd());
+
+    ESP_ERROR_CHECK(Register_Start_Motor_CMD());
+    ESP_ERROR_CHECK(Register_Stop_Motor_CMD());
+    ESP_ERROR_CHECK(Register_Quick_Start_Motor_CMD());
+    ESP_ERROR_CHECK(Register_Quick_Start_Motor_CMD());
+    ESP_ERROR_CHECK(Register_Rotate_Motor_CMD());
 
     const char *prompt = LOG_COLOR_I PROMPT_STR "> " LOG_RESET_COLOR; // Define the prompt string
 

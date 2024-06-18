@@ -1,6 +1,26 @@
 #include <console.h>
 #include "main.h"
 
+esp_err_t Rotate_Motor(int argc, char **argv)
+{
+    esp_err_t Function_Error = ESP_OK;
+
+    int nerrors = arg_parse(argc, argv, (void **)&Rotate_motor_args); // Parse command line arguments
+
+    if (nerrors != 0)
+    {
+        arg_print_errors(stderr, Rotate_motor_args.end, argv[0]); // Print errors if argument parsing fails
+        return 1;
+    }
+
+    printf("FREQUENCY : '%d'\n", Rotate_motor_args.Frequency->ival[0]); // Print Frequency
+    printf("DIRECTION : '%d'\n", Rotate_motor_args.Direction->ival[0]); // Print Direction
+    printf("STEPS     : '%d'\n", Rotate_motor_args.Steps->ival[0]);     // Print Steps
+    printf("Rotation  : '%d'\n", Rotate_motor_args.Rotation->ival[0]);  // Print Rotation
+
+    return Function_Error;
+}
+
 /**
  * @brief Start the stepper motor based on command-line arguments.
  *
@@ -11,13 +31,13 @@
  *
  * @return 0 if successful, 1 if argument parsing fails.
  */
-esp_err_t quick_start_motor(void)
+esp_err_t Quick_Start_Motor(void)
 {
     printf("FREQUENCY : 1Khz\n");    // Print Frequency
     printf("DIRECTION : FORWARD\n"); // Print Direction
     printf("DUTY CYCLE: 50\n");      // Print Duty cycle
 
-    return Start_stepper_Motor(MOTOR_DIRECTION_FORWARD, PWM_FREQUENCY_1KHZ, PWM_DUTY_CYCLE_50);
+    return Start_Stepper_Motor(MOTOR_DIRECTION_FORWARD, PWM_FREQUENCY_1KHZ, PWM_DUTY_CYCLE_50);
 }
 
 /**
@@ -32,7 +52,7 @@ esp_err_t quick_start_motor(void)
  * @param argv Array of command-line argument strings.
  * @return 0 if successful, 1 if argument parsing fails.
  */
-esp_err_t start_motor(int argc, char **argv)
+esp_err_t Start_Motor(int argc, char **argv)
 {
     esp_err_t Function_Error = ESP_OK;
 
@@ -48,7 +68,7 @@ esp_err_t start_motor(int argc, char **argv)
     printf("DIRECTION : '%d'\n", Start_motor_args.Direction->ival[0]);  // Print Direction
     printf("DUTY CYCLE: '%d'\n", Start_motor_args.Duty_cycle->ival[0]); // Print Steps
 
-    Function_Error += Start_stepper_Motor(Start_motor_args.Direction->ival[0], Start_motor_args.Frequency->ival[0], Start_motor_args.Duty_cycle->ival[0]);
+    Function_Error = Start_Stepper_Motor(Start_motor_args.Direction->ival[0], Start_motor_args.Frequency->ival[0], Start_motor_args.Duty_cycle->ival[0]);
 
     return Function_Error;
 }
@@ -65,7 +85,7 @@ esp_err_t start_motor(int argc, char **argv)
  *     - ESP_ERR_INVALID_ARG: Invalid argument provided
  *     - ESP_ERR_INVALID_STATE: Console not initialized or other invalid state
  */
-esp_err_t register_start_motor_cmd(void)
+esp_err_t Register_Start_Motor_CMD(void)
 {
     Start_motor_args.Frequency = arg_int0(NULL, "frq", "<t>", "Frequency of the PWM");           // Define timeout argument
     Start_motor_args.Direction = arg_int0(NULL, "dir", "<t>", "Direction of the stepper motor"); // Define SSID argument
@@ -76,32 +96,51 @@ esp_err_t register_start_motor_cmd(void)
         .command = "start_motor",                      // Command name
         .help = "Start moving the motor continuously", // Command description
         .hint = NULL,                                  // Command hint (optional)
-        .func = &start_motor,                          // Command handler function
+        .func = &Start_Motor,                          // Command handler function
         .argtable = &Start_motor_args                  // Argument table
     };
 
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
 }
 
-esp_err_t register_stop_motor_cmd(void)
+esp_err_t Register_Stop_Motor_CMD(void)
 {
     const esp_console_cmd_t join_cmd = {
         .command = "stop_motor",                                 // Command name
         .help = "Stop motor by disabling and also stop the PWM", // Command description
         .hint = NULL,                                            // Command hint (optional)
-        .func = &Stop_stepper_Motor,                             // Command handler function
+        .func = &Stop_Stepper_Motor,                             // Command handler function
     };
 
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
 }
 
-esp_err_t Register_Quick_Start_Motor_cmd(void)
+esp_err_t Register_Quick_Start_Motor_CMD(void)
 {
     const esp_console_cmd_t join_cmd = {
         .command = "quick_motor_start",            // Command name
         .help = "start_motor_with_default_values", // Command description
         .hint = NULL,                              // Command hint (optional)
-        .func = &quick_start_motor,                // Command handler function
+        .func = &Quick_Start_Motor,                // Command handler function
+    };
+
+    return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
+}
+
+esp_err_t Register_Rotate_Motor_CMD(void)
+{
+    Rotate_motor_args.Frequency = arg_int0(NULL, "frq", "<t>", "Frequency of the PWM signal");        // Define frequency of the PWM
+    Rotate_motor_args.Direction = arg_int0(NULL, "dir", "<t>", "Direction of the stepper motor");     // Define direction of the motor
+    Rotate_motor_args.Steps = arg_int0(NULL, "step", "<t>", "Micro steps of the motor driver");       // Define steps of the motor
+    Rotate_motor_args.Rotation = arg_int0(NULL, "rotation", "<t>", "Number of rotation to be taken"); // Define rotation of the motor
+    Rotate_motor_args.end = arg_end(2);                                                               // Define end marker for argument table
+
+    const esp_console_cmd_t join_cmd = {
+        .command = "rotate_motor",                 // Command name
+        .help = "Moving the motor in fixed angle", // Command description
+        .hint = NULL,                              // Command hint (optional)
+        .func = &Rotate_Motor,                     // Command handler function
+        .argtable = &Rotate_motor_args             // Argument table
     };
 
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
