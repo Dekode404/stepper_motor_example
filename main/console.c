@@ -18,6 +18,22 @@ esp_err_t Rotate_Motor(int argc, char **argv)
     printf("STEPS     : '%d'\n", Rotate_motor_args.Steps->ival[0]);     // Print Steps
     printf("Rotation  : '%d'\n", Rotate_motor_args.Rotation->ival[0]);  // Print Rotation
 
+    // Calculate total time for one rotation
+    float time_per_step = 1.0 / Rotate_motor_args.Frequency->ival[0];
+    float total_time = time_per_step * Rotate_motor_args.Steps->ival[0];
+
+    printf("Time to complete one rotation  : '%f Sec'\n", total_time); // Print Rotation
+
+    gpio_set_level(STEPPER_MOTOR_DIR_PIN, (Rotate_motor_args.Direction->ival[0] == MOTOR_DIRECTION_FORWARD) ? SET_GPIO_LEVEL_HIGH : SET_GPIO_LEVEL_LOW);
+    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_50, 0);
+    ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, Rotate_motor_args.Frequency->ival[0]); // Set the PWM frequency
+
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW); // Enable the Motor driver
+    vTaskDelay(pdMS_TO_TICKS(total_time * Rotate_motor_args.Rotation->ival[0] * 1000));
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH); // Disable the Motor driver
+
+    Stop_Stepper_Motor();
+
     return Function_Error;
 }
 
