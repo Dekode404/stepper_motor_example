@@ -22,9 +22,9 @@ esp_err_t Rotate_Angle(int argc, char **argv)
     float time_per_step = 1.0 / Rotate_angle_args.Frequency->ival[0];                                      // Calculate time per step in seconds
     float total_time = (time_per_step * steps_for_angle) * 1000;                                           // Calculate total time for the given angle
 
-    printf("Time taken for %.2f degrees: %.4f ms\n", Rotate_angle_args.Angle->dval[0], total_time);
+    printf("Time taken for %.2f degrees: %d us\n", Rotate_angle_args.Angle->dval[0], (uint32_t)total_time * 1000);
 
-    Stop_Stepper_Motor();
+    Function_Error = Rotate_Stepper_Motor(Rotate_angle_args.Frequency->ival[0], Rotate_angle_args.Direction->ival[0], total_time);
 
     return Function_Error;
 }
@@ -50,7 +50,7 @@ esp_err_t Rotate_Motor(int argc, char **argv)
     float time_per_step = 1.0 / Rotate_motor_args.Frequency->ival[0];
     float total_time = ((time_per_step * Rotate_motor_args.Steps->ival[0]) * 1000) * Rotate_motor_args.Rotation->ival[0];
 
-    printf("Time to complete one rotation  : '%fms'\n", total_time); // Print Rotation
+    printf("Time to complete rotations : '%d us'\n", (uint32_t)total_time * 1000); // Print Rotation
 
     Function_Error = Rotate_Stepper_Motor(Rotate_motor_args.Frequency->ival[0], Rotate_motor_args.Direction->ival[0], total_time);
 

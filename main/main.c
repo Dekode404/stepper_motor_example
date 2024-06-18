@@ -17,7 +17,7 @@
 #include "main.h"
 #include "console.h"
 
-esp_err_t Rotate_Stepper_Motor(uint PWM_frequency, uint8_t Motor_Direction, uint Motor_run_time)
+esp_err_t Rotate_Stepper_Motor(uint PWM_frequency, uint8_t Motor_Direction, float Motor_run_time)
 {
     esp_err_t Function_Error = ESP_OK;
 
@@ -27,8 +27,11 @@ esp_err_t Rotate_Stepper_Motor(uint PWM_frequency, uint8_t Motor_Direction, uint
 
     ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, PWM_frequency); // Set the PWM frequency
 
-    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW); // Enable the Motor driver
-    vTaskDelay(pdMS_TO_TICKS(Motor_run_time));
+    // Calculate the delay in ticks for a 1000 microsecond (1 millisecond) delay
+    TickType_t delay_ticks = ((Motor_run_time * 1000) * configTICK_RATE_HZ) / 1000000;
+
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW);  // Enable the Motor driver
+    vTaskDelay(delay_ticks);                                   // Delay for the calculated number of ticks
     gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH); // Disable the Motor driver
 
     Stop_Stepper_Motor();
