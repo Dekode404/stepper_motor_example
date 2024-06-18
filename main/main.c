@@ -17,6 +17,25 @@
 #include "main.h"
 #include "console.h"
 
+esp_err_t Rotate_Stepper_Motor(uint PWM_frequency, uint8_t Motor_Direction, uint Motor_run_time)
+{
+    esp_err_t Function_Error = ESP_OK;
+
+    gpio_set_level(STEPPER_MOTOR_DIR_PIN, (Motor_Direction == MOTOR_DIRECTION_FORWARD) ? SET_GPIO_LEVEL_HIGH : SET_GPIO_LEVEL_LOW);
+
+    ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_50, 0);
+
+    ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, PWM_frequency); // Set the PWM frequency
+
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_LOW); // Enable the Motor driver
+    vTaskDelay(pdMS_TO_TICKS(Motor_run_time));
+    gpio_set_level(STEPPER_MOTOR_EN_PIN, SET_GPIO_LEVEL_HIGH); // Disable the Motor driver
+
+    Stop_Stepper_Motor();
+
+    return Function_Error;
+}
+
 /**
  * @brief Stop the stepper motor
  *
