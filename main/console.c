@@ -1,6 +1,34 @@
 #include <console.h>
 #include "main.h"
 
+esp_err_t Rotate_Angle(int argc, char **argv)
+{
+    esp_err_t Function_Error = ESP_OK;
+
+    int nerrors = arg_parse(argc, argv, (void **)&Rotate_angle_args); // Parse command line arguments
+
+    if (nerrors != 0)
+    {
+        arg_print_errors(stderr, Rotate_angle_args.end, argv[0]); // Print errors if argument parsing fails
+        return 1;
+    }
+
+    printf("FREQUENCY : '%d'\n", Rotate_angle_args.Frequency->ival[0]); // Print Frequency
+    printf("DIRECTION : '%d'\n", Rotate_angle_args.Direction->ival[0]); // Print Direction
+    printf("STEPS     : '%d'\n", Rotate_angle_args.Steps->ival[0]);     // Print Steps
+    printf("Angle     : '%f'\n", Rotate_angle_args.Angle->dval[0]);     // Print Angle
+
+    float steps_for_angle = (Rotate_angle_args.Steps->ival[0] * Rotate_angle_args.Angle->dval[0]) / 360.0; // Calculate the total steps for the given angle
+    float time_per_step = 1.0 / Rotate_angle_args.Frequency->ival[0];                                      // Calculate time per step in seconds
+    float total_time = (time_per_step * steps_for_angle) * 1000;                                           // Calculate total time for the given angle
+
+    printf("Time taken for %.2f degrees: %.4f ms\n", Rotate_angle_args.Angle->dval[0], total_time);
+
+    Stop_Stepper_Motor();
+
+    return Function_Error;
+}
+
 esp_err_t Rotate_Motor(int argc, char **argv)
 {
     esp_err_t Function_Error = ESP_OK;
@@ -144,11 +172,30 @@ esp_err_t Register_Rotate_Motor_CMD(void)
     Rotate_motor_args.end = arg_end(2);                                                               // Define end marker for argument table
 
     const esp_console_cmd_t join_cmd = {
-        .command = "rotate_motor",                 // Command name
+        .command = "rotate_motor",                  // Command name
+        .help = "Rotate motor for fixed rotations", // Command description
+        .hint = NULL,                               // Command hint (optional)
+        .func = &Rotate_Motor,                      // Command handler function
+        .argtable = &Rotate_motor_args              // Argument table
+    };
+
+    return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console
+}
+
+esp_err_t Register_Rotate_Angle_CMD(void)
+{
+    Rotate_angle_args.Frequency = arg_int0(NULL, "frq", "<t>", "Frequency of the PWM signal (in Hz)");                  // Set the PWM frequency for the stepper motor
+    Rotate_angle_args.Direction = arg_int0(NULL, "dir", "<t>", "Direction of the stepper motor (1 for CW, 0 for CCW)"); // Set the rotation direction (1 for clockwise, 0 for counterclockwise)
+    Rotate_angle_args.Steps = arg_int0(NULL, "step", "<t>", "Number of steps per full rotation of the motor");          // Set the number of microsteps per full rotation
+    Rotate_angle_args.Angle = arg_dbl0(NULL, "angle", "<t>", "Angle (in degrees) to rotate the motor");                 // Set the angle (in degrees) to rotate the motor
+    Rotate_angle_args.end = arg_end(2);
+
+    const esp_console_cmd_t join_cmd = {
+        .command = "rotate_angle",                 // Command name
         .help = "Moving the motor in fixed angle", // Command description
         .hint = NULL,                              // Command hint (optional)
-        .func = &Rotate_Motor,                     // Command handler function
-        .argtable = &Rotate_motor_args             // Argument table
+        .func = &Rotate_Angle,                     // Command handler function
+        .argtable = &Rotate_angle_args             // Argument table
     };
 
     return esp_console_cmd_register(&join_cmd); // Register the 'join' command with the console

@@ -192,8 +192,8 @@ void app_main(void)
     ESP_ERROR_CHECK(Register_Start_Motor_CMD());
     ESP_ERROR_CHECK(Register_Stop_Motor_CMD());
     ESP_ERROR_CHECK(Register_Quick_Start_Motor_CMD());
-    ESP_ERROR_CHECK(Register_Quick_Start_Motor_CMD());
     ESP_ERROR_CHECK(Register_Rotate_Motor_CMD());
+    ESP_ERROR_CHECK(Register_Rotate_Angle_CMD());
 
     const char *prompt = LOG_COLOR_I PROMPT_STR "> " LOG_RESET_COLOR; // Define the prompt string
 

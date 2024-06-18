@@ -55,6 +55,7 @@
         "hpoint",
         "ledc",
         "linenoise",
+        "microsteps",
         "Minicom",
         "nerrors",
         "SCLK"
