@@ -35,12 +35,13 @@
 
 #define GPIO_OUTPUT_PIN_SEL ((1ULL << STEPPER_MOTOR_EN_PIN) | (1ULL << STEPPER_MOTOR_DIR_PIN))
 
+#define PWM_FREQUENCY_0HZ 0000
 #define PWM_FREQUENCY_1KHZ 1000
 #define PWM_DUTY_CYCLE_50 512
 #define PWM_DUTY_CYCLE_00 00
 
 #define PWM_START_FREQ 100 // Starting frequency for PWM
-#define PWM_INCREMENT 100  // Increment step for frequency
+#define PWM_INCREMENT 10   // Increment step for frequency
 #define PWM_DELAY_MS 10    // Delay between frequency changes in milliseconds
 
 #define MOTOR_DIRECTION_FORWARD 01

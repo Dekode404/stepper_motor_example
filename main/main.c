@@ -56,6 +56,23 @@ esp_err_t Stop_Stepper_Motor(void)
     Function_Error += gpio_set_level(STEPPER_MOTOR_DIR_PIN, SET_GPIO_LEVEL_HIGH);
     Function_Error += ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, PWM_DUTY_CYCLE_00, 0);
 
+    uint32_t PWM_frequency = ledc_get_freq(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+
+    // Loop to gradually decreases frequency from target_frequency to zero
+    for (uint32_t freq = PWM_frequency; freq > PWM_FREQUENCY_0HZ; freq = freq - PWM_INCREMENT)
+    {
+        Function_Error = ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_TIMER_0, freq); // Set the PWM frequency
+
+        if (Function_Error != ESP_OK) // Check for errors while setting the frequency
+        {
+            printf("Error setting frequency: %dHZ\n", freq);
+
+            break; // Exit the loop if an error occurs
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(PWM_DELAY_MS)); // Delay to allow the motor to adapt to the new frequency
+    }
+
     return Function_Error;
 }
 
