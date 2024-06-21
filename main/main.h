@@ -41,7 +41,7 @@
 #define PWM_DUTY_CYCLE_00 00
 
 #define PWM_START_FREQ 100 // Starting frequency for PWM
-#define PWM_INCREMENT 10   // Increment step for frequency
+#define PWM_INCREMENT 100  // Increment step for frequency
 #define PWM_DELAY_MS 10    // Delay between frequency changes in milliseconds
 
 #define MOTOR_DIRECTION_FORWARD 01
